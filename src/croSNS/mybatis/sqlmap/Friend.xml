@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="friendDAO">
+
+	<select id="selectCusSnsId" parameterType="String" resultType="int">
+		SELECT count(*) from customer_list where cus_sns_id='${value}';
+	</select>
+
+	<!-- 시시트메 아이디,SNS종류넘버, SNS아이디 입력 -->
+	<insert id="insertCustomerList" parameterType="croSNS.friend.CustomerListVO">
+		INSERT INTO customer_list (sys_id, sns_list_no, cus_sns_id)
+		VALUES ('${sys_id}', '${sns_list_no}', '${cus_sns_id}');
+	</insert>
+
+	<!-- 아이디 값에 맞는 cus_no셀렉트 -->
+	<select id="selectCusNo" parameterType="String" resultType="int">
+		SELECT cus_no FROM customer_list WHERE cus_sns_id='${value}';
+	</select>
+	
+	
+	<insert id="insertCustomerInfo" parameterType="croSNS.friend.FriendVO">
+		INSERT INTO customer_info (cus_no, cus_name, cus_age, cus_gender, cus_locale, group_no)
+		VALUES ('${cus_no}', '${cus_name}', '${cus_age}', '${cus_gender}', '${cus_locale}', '0');
+	</insert>
+	
+	<select id="selectCustomerInfo" parameterType="int" resultType="croSNS.friend.FriendVO">
+		SELECT * FROM customer_info JOIN customer_list ON customer_info.cus_no = customer_list.cus_no JOIN cus_group ON customer_info.group_no = cus_group.group_no;
+		<!-- WHERE sns_list_no=#{value} -->
+	</select>
+	
+	<!-- 名前で検索 -->
+	<select id="selectFriendSerch" parameterType="String" resultType="croSNS.friend.FriendVO">
+		SELECT * FROM customer_info JOIN customer_list ON customer_info.cus_no = customer_list.cus_no WHERE cus_name LIKE '%${value}%';
+	</select>
+	
+	<select id="exportToExcel" parameterType="java.util.Map" resultType="croSNS.friend.FriendVO">
+		SELECT * FROM customer_info JOIN customer_list ON customer_info.cus_no = customer_list.cus_no JOIN cus_group ON customer_info.group_no = cus_group.group_no;
+	</select>
+	
+	<select id="selectGroup" parameterType="int" resultType="croSNS.friend.FriendVO">
+		SELECT * FROM cus_group;
+	</select>
+	
+	<!--  -->
+	<update id="updateGroup" parameterType="croSNS.friend.FriendVO">
+		UPDATE customer_info SET group_no='${group_no}' WHERE cus_no='${cus_no}';
+	</update>
+	
+	<update id="updateMemo" parameterType="croSNS.friend.FriendVO">
+		UPDATE customer_info SET cus_memo='${cus_memo}' WHERE cus_no='${cus_no}';
+	</update>
+	
+
+</mapper>
