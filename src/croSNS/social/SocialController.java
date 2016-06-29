@@ -249,16 +249,53 @@ public class SocialController
         return modelAndView;
 	}
 	
-	public int twitterLC(){
-		/*try {
-			System.out.println("twitterLC() 트위터스크린네임 : " + sessionObjects.getTwitter().getScreenName());
-			return 3;
+	@RequestMapping(value="/timeline.do")
+	public ModelAndView TimeLine() throws TwitterException{
+		
+		ModelAndView mav = new ModelAndView();
+		
+		TwitterFactory factory = new TwitterFactory();
+		Twitter twitter = factory.getInstance();
+		twitter = sessionObjects.getTwitter();//쓰기 편하게 생성
+		System.out.println("timeline.do 트위터스크린네임 : " + sessionObjects.getTwitter().getScreenName());
+		
+		//팔로워 스크림네임 시작
+		String twitterScreenName = twitter.getScreenName();//스크린네임
+		long myId = twitter.getId();
+		
+		//팔로워 스크린네임 출력
+		try {
+			IDs followerIDs = twitter.getFollowersIDs(twitterScreenName, -1);
+			long[] ids = followerIDs.getIDs();
+			for(long id : ids){
+				twitter4j.User user = twitter.showUser(id);
+				String useScreenName = user.getScreenName();
+				System.out.println(useScreenName);
+			}
 		} catch (Exception e) {
-			System.out.println("twitterLC() 트위터스크린네임 오류!!!!!!!!!!!!");
-			return 0;
-		}*/
-		System.out.println("twitterLC() 트위터스크린네임 : " + sessionObjects);
-		return 3;
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//내글빼고 모든 글 보기
+		ResponseList<Status> homeTimeline = twitter.getHomeTimeline();
+		for(Status ht : homeTimeline){
+			if(ht.getUser().getId() != myId){
+				System.out.println("==timeline.do============================================================================");
+				System.out.println("글쓴이 이름 : " + ht.getUser().getName());
+				System.out.println("타임라인 스크린네임 : " + ht.getUser().getScreenName());
+				System.out.println("글쓴이 아이디 : " + ht.getUser().getId());
+				System.out.println("타임라인 내용 : " + ht.getText());
+				System.out.println("타임라인 아이디 : " + ht.getId());
+			}
+			System.out.println("");
+		}//끝
+		
+		mav.addObject("twitter", twitter);
+		mav.addObject("twitterHomeTimeline", homeTimeline);
+		mav.setViewName("/timeline/timeline");
+		return mav;
+		
 	}
 	
 }

@@ -28,6 +28,7 @@
 			<mvc:mapping path="/twitterCallback.do" />
 			<mvc:mapping path="/twitterShow.do" />
 			<mvc:mapping path="/twitterLogOut.do" />
+			<mvc:mapping path="/timeline.do" />
 			
 			<!-- ContentsController -->
 			<mvc:mapping path="/group.do" />
